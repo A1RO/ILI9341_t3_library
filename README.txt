@@ -1,4 +1,12 @@
-The source of this library has been modified to work with the multi-font library Adafruit_mfGFX - Jeremy Peake
+The source of this library has been modified to work with the multi-font library Adafruit_mfGFX by pkourany - you will need to also download and include the Adafruit_mfGFX library and include in your sketch:
+
+http://github.com/pkourany/Adafruit_mfGFX_Library
+
+Discussion regarding multi-font support:
+
+http://forum.pjrc.com/threads/27510-ILI9341_t3-Library-Fonts
+
+------------------------------------------
 
 Discussion regarding this optimized version:
 
