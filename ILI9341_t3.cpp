@@ -1,5 +1,6 @@
 // https://github.com/PaulStoffregen/ILI9341_t3
 // http://forum.pjrc.com/threads/26305-Highly-optimized-ILI9341-(320x240-TFT-color-display)-library
+// http://forum.pjrc.com/threads/27510-ILI9341_t3-Library-Fonts
 
 /***************************************************
   This is our library for the Adafruit ILI9341 Breakout and Shield
@@ -26,9 +27,9 @@
 #define WIDTH  ILI9341_TFTWIDTH
 #define HEIGHT ILI9341_TFTHEIGHT
 
-// Constructor when using hardware SPI.  Faster, but must use SPI pins
-// specific to each board type (e.g. 11,13 for Uno, 51,52 for Mega, etc.)
-ILI9341_t3::ILI9341_t3(uint8_t cs, uint8_t dc, uint8_t rst, uint8_t mosi, uint8_t sclk, uint8_t miso)
+// Constructor when using hardware SPI. Reference to Adafruit_GFX added
+ILI9341_t3::ILI9341_t3(uint8_t cs, uint8_t dc, uint8_t rst, uint8_t mosi, uint8_t sclk, 
+			uint8_t miso) : Adafruit_GFX(ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT)
 {
 	_cs   = cs;
 	_dc   = dc;
@@ -816,14 +817,14 @@ void ILI9341_t3::drawBitmap(int16_t x, int16_t y,
   }
 }
 
-size_t ILI9341_t3::write(uint8_t c) {
+/*size_t ILI9341_t3::write(uint8_t c) {			// Comment out text functions, Adafruit_mfGFX will be used
   if (c == '\n') {
     cursor_y += textsize*8;
     cursor_x  = 0;
   } else if (c == '\r') {
     // skip em
   } else {
-    drawChar(cursor_x, cursor_y, c, textcolor, textbgcolor, textsize);
+    drawFastChar(cursor_x, cursor_y, c, textcolor, textbgcolor, textsize);
     cursor_x += textsize*6;
     if (wrap && (cursor_x > (_width - textsize*6))) {
       cursor_y += textsize*8;
@@ -831,10 +832,10 @@ size_t ILI9341_t3::write(uint8_t c) {
     }
   }
   return 1;
-}
+}*/
 
 // Draw a character
-void ILI9341_t3::drawChar(int16_t x, int16_t y, unsigned char c,
+/*void ILI9341_t3::drawChar(int16_t x, int16_t y, unsigned char c,
 			    uint16_t fgcolor, uint16_t bgcolor, uint8_t size)
 {
 	if((x >= _width)            || // Clip right
@@ -954,9 +955,9 @@ void ILI9341_t3::drawChar(int16_t x, int16_t y, unsigned char c,
 		writecommand_last(ILI9341_NOP);
 		SPI.endTransaction();
 	}
-}
+}*/
 
-void ILI9341_t3::setCursor(int16_t x, int16_t y) {
+/*void ILI9341_t3::setCursor(int16_t x, int16_t y) {
   cursor_x = x;
   cursor_y = y;
 }
@@ -978,10 +979,8 @@ void ILI9341_t3::setTextColor(uint16_t c, uint16_t b) {
 
 void ILI9341_t3::setTextWrap(boolean w) {
   wrap = w;
-}
+}*/
 
 uint8_t ILI9341_t3::getRotation(void) {
   return rotation;
 }
-
-
