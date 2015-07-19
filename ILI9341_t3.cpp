@@ -1,6 +1,5 @@
 // https://github.com/PaulStoffregen/ILI9341_t3
 // http://forum.pjrc.com/threads/26305-Highly-optimized-ILI9341-(320x240-TFT-color-display)-library
-// http://forum.pjrc.com/threads/27510-ILI9341_t3-Library-Fonts
 
 /***************************************************
   This is our library for the Adafruit ILI9341 Breakout and Shield
@@ -27,9 +26,9 @@
 #define WIDTH  ILI9341_TFTWIDTH
 #define HEIGHT ILI9341_TFTHEIGHT
 
-// Constructor when using hardware SPI. Reference to Adafruit_GFX added
-ILI9341_t3::ILI9341_t3(uint8_t cs, uint8_t dc, uint8_t rst, uint8_t mosi, uint8_t sclk, 
-			uint8_t miso) : Adafruit_GFX(ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT)
+// Constructor when using hardware SPI.  Faster, but must use SPI pins
+// specific to each board type (e.g. 11,13 for Uno, 51,52 for Mega, etc.)
+ILI9341_t3::ILI9341_t3(uint8_t cs, uint8_t dc, uint8_t rst, uint8_t mosi, uint8_t sclk, uint8_t miso) : Adafruit_GFX(ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT)
 {
 	_cs   = cs;
 	_dc   = dc;
@@ -817,170 +816,94 @@ void ILI9341_t3::drawBitmap(int16_t x, int16_t y,
   }
 }
 
-/*size_t ILI9341_t3::write(uint8_t c) {			// Comment out text functions, Adafruit_mfGFX will be used
-  if (c == '\n') {
-    cursor_y += textsize*8;
-    cursor_x  = 0;
-  } else if (c == '\r') {
-    // skip em
-  } else {
-    drawFastChar(cursor_x, cursor_y, c, textcolor, textbgcolor, textsize);
-    cursor_x += textsize*6;
-    if (wrap && (cursor_x > (_width - textsize*6))) {
-      cursor_y += textsize*8;
-      cursor_x = 0;
-    }
-  }
-  return 1;
-}*/
-
-// Draw a character
-/*void ILI9341_t3::drawChar(int16_t x, int16_t y, unsigned char c,
-			    uint16_t fgcolor, uint16_t bgcolor, uint8_t size)
+void ILI9341_t3::fillGrad(unsigned long colour1, unsigned long colour2)
 {
-	if((x >= _width)            || // Clip right
-	   (y >= _height)           || // Clip bottom
-	   ((x + 6 * size - 1) < 0) || // Clip left  TODO: is this correct?
-	   ((y + 8 * size - 1) < 0))   // Clip top   TODO: is this correct?
-		return;
+	int16_t r1 = highByte(colour1 >> 8);
+	int16_t r2 = highByte(colour2 >> 8);
+	int16_t g1 = lowByte(colour1 >> 8);
+	int16_t g2 = lowByte(colour2 >> 8);
+	int16_t b1 = lowByte(colour1);
+	int16_t b2 = lowByte(colour2);
+	float redIncr = (r1 - r2);
+	float greenIncr = (g1 - g2);
+	float blueIncr = (b1 - b2);
 
-	if (fgcolor == bgcolor) {
-		// This transparent approach is only about 20% faster
-		if (size == 1) {
-			uint8_t mask = 0x01;
-			int16_t xoff, yoff;
-			for (yoff=0; yoff < 8; yoff++) {
-				uint8_t line = 0;
-				for (xoff=0; xoff < 5; xoff++) {
-					if (font[c * 5 + xoff] & mask) line |= 1;
-					line <<= 1;
-				}
-				line >>= 1;
-				xoff = 0;
-				while (line) {
-					if (line == 0x1F) {
-						drawFastHLine(x + xoff, y + yoff, 5, fgcolor);
-						break;
-					} else if (line == 0x1E) {
-						drawFastHLine(x + xoff, y + yoff, 4, fgcolor);
-						break;
-					} else if ((line & 0x1C) == 0x1C) {
-						drawFastHLine(x + xoff, y + yoff, 3, fgcolor);
-						line <<= 4;
-						xoff += 4;
-					} else if ((line & 0x18) == 0x18) {
-						drawFastHLine(x + xoff, y + yoff, 2, fgcolor);
-						line <<= 3;
-						xoff += 3;
-					} else if ((line & 0x10) == 0x10) {
-						drawPixel(x + xoff, y + yoff, fgcolor);
-						line <<= 2;
-						xoff += 2;
-					} else {
-						line <<= 1;
-						xoff += 1;
-					}
-				}
-				mask = mask << 1;
-			}
-		} else {
-			uint8_t mask = 0x01;
-			int16_t xoff, yoff;
-			for (yoff=0; yoff < 8; yoff++) {
-				uint8_t line = 0;
-				for (xoff=0; xoff < 5; xoff++) {
-					if (font[c * 5 + xoff] & mask) line |= 1;
-					line <<= 1;
-				}
-				line >>= 1;
-				xoff = 0;
-				while (line) {
-					if (line == 0x1F) {
-						fillRect(x + xoff * size, y + yoff * size,
-							5 * size, size, fgcolor);
-						break;
-					} else if (line == 0x1E) {
-						fillRect(x + xoff * size, y + yoff * size,
-							4 * size, size, fgcolor);
-						break;
-					} else if ((line & 0x1C) == 0x1C) {
-						fillRect(x + xoff * size, y + yoff * size,
-							3 * size, size, fgcolor);
-						line <<= 4;
-						xoff += 4;
-					} else if ((line & 0x18) == 0x18) {
-						fillRect(x + xoff * size, y + yoff * size,
-							2 * size, size, fgcolor);
-						line <<= 3;
-						xoff += 3;
-					} else if ((line & 0x10) == 0x10) {
-						fillRect(x + xoff * size, y + yoff * size,
-							size, size, fgcolor);
-						line <<= 2;
-						xoff += 2;
-					} else {
-						line <<= 1;
-						xoff += 1;
-					}
-				}
-				mask = mask << 1;
-			}
-		}
-	} else {
-		// This solid background approach is about 5 time faster
-		SPI.beginTransaction(SPISettings(SPICLOCK, MSBFIRST, SPI_MODE0));
-		setAddr(x, y, x + 6 * size - 1, y + 8 * size - 1);
-		writecommand_cont(ILI9341_RAMWR);
-		uint8_t xr, yr;
-		uint8_t mask = 0x01;
-		uint16_t color;
-		for (y=0; y < 8; y++) {
-			for (yr=0; yr < size; yr++) {
-				for (x=0; x < 5; x++) {
-					if (font[c * 5 + x] & mask) {
-						color = fgcolor;
-					} else {
-						color = bgcolor;
-					}
-					for (xr=0; xr < size; xr++) {
-						writedata16_cont(color);
-					}
-				}
-				for (xr=0; xr < size; xr++) {
-					writedata16_cont(bgcolor);
-				}
-			}
-			mask = mask << 1;
-		}
-		writecommand_last(ILI9341_NOP);
-		SPI.endTransaction();
+	int d = _height;
+	int w = _width;		
+
+	redIncr = redIncr / d;
+	greenIncr = greenIncr / d;
+	blueIncr = blueIncr / d;
+
+	uint16_t c = ((r2 & 0xF8) << 8) | ((g2 & 0xFC) << 3) | (b2 >> 3);
+
+	float red = r2;
+	float green = g2;
+	float blue = b2;
+
+	for (int y = (d - 1); y >= 0; y--)
+	{
+		drawFastHLine(0, y, w, c);
+		
+		red += redIncr;
+		green += greenIncr;
+		blue += blueIncr;
+		r2 = red;
+		g2 = green;
+		b2 = blue;
+		c = ((r2 & 0xF8) << 8) | ((g2 & 0xFC) << 3) | (b2 >> 3);
 	}
-}*/
-
-/*void ILI9341_t3::setCursor(int16_t x, int16_t y) {
-  cursor_x = x;
-  cursor_y = y;
 }
 
-void ILI9341_t3::setTextSize(uint8_t s) {
-  textsize = (s > 0) ? s : 1;
-}
+void ILI9341_t3::fillGrad(unsigned long colour1, unsigned long colour2, bool plane = false)
+{
+	int16_t r1 = highByte(colour1 >> 8);
+	int16_t r2 = highByte(colour2 >> 8);
+	int16_t g1 = lowByte(colour1 >> 8);
+	int16_t g2 = lowByte(colour2 >> 8);
+	int16_t b1 = lowByte(colour1);
+	int16_t b2 = lowByte(colour2);
+	float redIncr = (r1 - r2);
+	float greenIncr = (g1 - g2);
+	float blueIncr = (b1 - b2);
 
-void ILI9341_t3::setTextColor(uint16_t c) {
-  // For 'transparent' background, we'll set the bg 
-  // to the same as fg instead of using a flag
-  textcolor = textbgcolor = c;
-}
+	int d = _height;
+	int w = _width;
 
-void ILI9341_t3::setTextColor(uint16_t c, uint16_t b) {
-  textcolor   = c;
-  textbgcolor = b; 
-}
+	if (plane != 0)
+	{
+		d = _width;
+		w = _height;
+	}
 
-void ILI9341_t3::setTextWrap(boolean w) {
-  wrap = w;
-}*/
+
+	redIncr = redIncr / d;
+	greenIncr = greenIncr / d;
+	blueIncr = blueIncr / d;
+
+	uint16_t c = ((r2 & 0xF8) << 8) | ((g2 & 0xFC) << 3) | (b2 >> 3);
+
+	float red = r2;
+	float green = g2;
+	float blue = b2;
+
+	for (int y = (d - 1); y >= 0; y--)
+	{
+		if (plane != 0)drawFastVLine(y, 0, w, c);
+		else drawFastHLine(0, y, w, c);
+
+		red += redIncr;
+		green += greenIncr;
+		blue += blueIncr;
+		r2 = red;
+		g2 = green;
+		b2 = blue;
+		c = ((r2 & 0xF8) << 8) | ((g2 & 0xFC) << 3) | (b2 >> 3);
+	}
+}
 
 uint8_t ILI9341_t3::getRotation(void) {
   return rotation;
 }
+
+
