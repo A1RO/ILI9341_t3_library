@@ -16,9 +16,10 @@
 
 #include "SPI.h"
 #include "ILI9341_t3.h"
+#include "Adafruit_mfGFX.h"
 
 // For the Adafruit shield, these are the default.
-#define TFT_DC  9
+#define TFT_DC  6
 #define TFT_CS 10
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
@@ -94,6 +95,10 @@ void setup() {
 
   Serial.print(F("Rounded rects (filled)   "));
   Serial.println(testFilledRoundRects());
+  delay(200);
+  
+  Serial.print(F("Screen Fill (Gradient)   "));
+  Serial.println(testFillGradient());
   delay(200);
 
   Serial.println(F("Done!"));
@@ -346,6 +351,23 @@ unsigned long testFilledRoundRects() {
     i2 = i / 2;
     tft.fillRoundRect(cx-i2, cy-i2, i, i, i/8, tft.color565(0, i, 0));
   }
+
+  return micros() - start;
+}
+
+unsigned long testFillGradient() {
+  unsigned long start = micros();
+  
+  tft.fillGrad(0xFFF000, 0x000FFF);
+  tft.fillGrad(0xFFF000, 0x000FFF, true);
+  tft.fillGrad(0xFF0000, 0x0000FF);
+  tft.fillGrad(0xFF0000, 0x0000FF, true);
+  tft.fillGrad(0x00FF00, 0x0000FF);
+  tft.fillGrad(0x00FF00, 0x0000FF, true);
+  tft.fillGrad(0xFF0000, 0x00FF00);
+  tft.fillGrad(0xFF0000, 0x00FF00, true);
+  tft.fillGrad(0xFFFFFF, 0x000000);
+  tft.fillGrad(0xFFFFFF, 0x000000, true);
 
   return micros() - start;
 }
