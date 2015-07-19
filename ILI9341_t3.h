@@ -1,6 +1,6 @@
 // https://github.com/PaulStoffregen/ILI9341_t3
 // http://forum.pjrc.com/threads/26305-Highly-optimized-ILI9341-(320x240-TFT-color-display)-library
-// http://forum.pjrc.com/threads/27510-ILI9341_t3-Library-Fonts
+
 /***************************************************
   This is our library for the Adafruit  ILI9341 Breakout and Shield
   ----> http://www.adafruit.com/products/1651
@@ -130,15 +130,8 @@ class ILI9341_t3 : public Adafruit_GFX
 	void drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, uint16_t color);
 	void fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, uint16_t color);
 	void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color);
-	
-	// These function declarations removed - mfGFX lib will be used instead
-	/*void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size);
-	void setCursor(int16_t x, int16_t y);
-	void setTextColor(uint16_t c);
-	void setTextColor(uint16_t c, uint16_t bg);
-	void setTextSize(uint8_t s);
-	void setTextWrap(boolean w);
-	virtual size_t write(uint8_t);*/
+	void fillGrad(unsigned long colour1, unsigned long colour2);
+	void fillGrad(unsigned long colour1, unsigned long colour2, bool plane);
 	int16_t width(void)  { return _width; }
 	int16_t height(void) { return _height; }
 	uint8_t getRotation(void);
