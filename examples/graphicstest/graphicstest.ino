@@ -19,7 +19,7 @@
 #include "Adafruit_mfGFX.h"
 
 // For the Adafruit shield, these are the default.
-#define TFT_DC  6
+#define TFT_DC  9
 #define TFT_CS 10
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
