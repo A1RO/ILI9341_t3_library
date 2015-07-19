@@ -32,3 +32,4 @@ setTextWrap	KEYWORD2
 readPixel	KEYWORD2
 readRect	KEYWORD2
 writeRect	KEYWORD2
+fillGrad KEYWORD2
