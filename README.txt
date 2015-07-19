@@ -6,6 +6,14 @@ Discussion regarding multi-font support:
 
 http://forum.pjrc.com/threads/27510-ILI9341_t3-Library-Fonts
 
+In addition to the Adafruit_GFX and mfGFX functions there is now a gradient fill function which fills the screen with a specified two colour gradient. Use the function as follows:
+
+tftInstance.fillGrad(24_bit_RGB_colour_1, 24_bit_RGB_colour_2)            // fills screen with two colour vertical gradient
+tftInstance.fillGrad(24_bit_RGB_colour_1, 24_bit_RGB_colour_2, fillOrientationFlag)  // fills screen with two colour gradient
+                                                                                     // false = vertical, true = horizontal
+
+*note that the colours are converted from 24bitRGB to 16bit (565) format for this display. 24bit colours are used as an input because these are easier to experiment with on a graphics editer first before putting values into your code. Colours should be declared as HEX values 0x000000 -> 0xFFFFFF where MSB = Red, bytes 3 & 4 = Green, LSB = Blue.
+
 ------------------------------------------
 
 Discussion regarding this optimized version:
