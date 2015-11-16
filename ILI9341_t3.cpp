@@ -476,8 +476,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "glcdfont.c"
-
 // Draw a circle outline
 void ILI9341_t3::drawCircle(int16_t x0, int16_t y0, int16_t r,
     uint16_t color) {
